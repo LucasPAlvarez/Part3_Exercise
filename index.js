@@ -45,12 +45,20 @@ app.get('/info', (request, response) =>{
 app.get('/api/persons/:id', (request,response) =>{
     const id = Number(request.params.id)
     //console.log('id', id)
-    const person = personList.filter(p => p.id == id)
+    const person = personList.find(p => p.id == id)
     if(!person){
         response.status(404).end()
     }else{
         response.json(personList.filter(p => p.id === id))
     }
+})
+
+app.delete('/api/persons/:id', (request,response) => {
+    const id = Number(request.params.id)
+    console.log('id', id)
+    personList = personList.filter(p => p.id !== id)
+    
+    response.status(204).end()
 })
 
 
