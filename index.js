@@ -61,6 +61,32 @@ app.delete('/api/persons/:id', (request,response) => {
     response.status(204).end()
 })
 
+const maxId = 10000
+
+app.post('/api/persons', (request,response) => {
+    const name = request.body.name
+    const number = request.body.number
+    console.log('name', name, 'phone', number, 'logic', name && number)
+
+    if(name && number){
+        console.log("entro")
+        const pId = Math.floor(Math.random() * maxId)
+        const person = {
+            id: pId,
+            name: name,
+            number: number       
+        }
+        console.log('person', person)
+        personList = personList.concat(person)
+        response.json(person)
+    }else{
+        console.log("paso")
+        response.status(400).json({
+            error: 'number or name is missing'
+        })
+    }
+})
+
 
 const PORT = 3001
 app.listen(PORT, ()=>{
