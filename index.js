@@ -1,7 +1,24 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
+
+//token creation
+morgan.token('json_body', (request, response) =>{
+    const body = JSON.stringify(request.body)
+    //console.log('inside the token, body as a string -> ', body)
+    return body
+})
+
+app.use(morgan('tiny', {
+        skip: (request,response) => request.method === 'POST'
+    })
+)
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :json_body', {
+    skip: (request, response) => request.method !== 'POST'
+}))
 
 let personList = [
     { 
