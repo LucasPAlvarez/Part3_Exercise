@@ -70,15 +70,23 @@ app.post('/api/persons', (request,response) => {
 
     if(name && number){
         console.log("entro")
-        const pId = Math.floor(Math.random() * maxId)
-        const person = {
-            id: pId,
-            name: name,
-            number: number       
+        if(!personList.find(p => p.name.toLowerCase() === name.toLowerCase())){
+            console.log("entro 2")
+            const pId = Math.floor(Math.random() * maxId)
+            const person = {
+                id: pId,
+                name: name,
+                number: number       
+            }
+            console.log('person', person)
+            personList = personList.concat(person)
+            response.json(person)
+        }else{
+            console.log("paso2")
+        response.status(400).json({
+            error: 'name must be unique'
+        })
         }
-        console.log('person', person)
-        personList = personList.concat(person)
-        response.json(person)
     }else{
         console.log("paso")
         response.status(400).json({
