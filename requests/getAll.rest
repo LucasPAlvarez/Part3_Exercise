@@ -19,3 +19,12 @@ Content-Type: application/json
     "name": "ricardo",
     "number": "2"
 }
+
+###
+POST https://part3-exercise.onrender.com/api/persons
+Content-Type: application/json
+
+{
+    "name": "ricardo",
+    "number": "2"
+}

@@ -5,6 +5,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cors())
+app.use(express.static('dist'))
 
 //token creation
 morgan.token('json_body', (request, response) =>{
@@ -45,9 +46,9 @@ let personList = [
     }
 ]
 
-app.get('/', (request, response) =>{
-    response.send("<h1>Hello, it is on</h1>")
-})
+// app.get('/', (request, response) =>{
+//     response.send("<h1>Hello, it is on</h1>")
+// })
 
 app.get('/api/persons', (request, response) => {
     response.json(personList)
