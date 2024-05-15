@@ -89,11 +89,11 @@ app.get('/api/persons/:id', (request,response) =>{
 })
 
 app.delete('/api/persons/:id', (request,response) => {
-    const id = Number(request.params.id)
-    console.log('id', id)
-    personList = personList.filter(p => p.id !== id)
-    
-    response.status(204).end()
+    const id = request.params.id
+    //console.log(id)
+    Contact.findByIdAndDelete(id).then(result => {
+        response.status(204).end()
+    })
 })
 
 const maxId = 10000
