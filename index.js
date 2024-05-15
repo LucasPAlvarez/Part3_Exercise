@@ -84,16 +84,22 @@ app.get('/api/persons/:id', (request,response) =>{
     Contact.findById(id).then(result => {
         response.json(result)
     }).catch(error => {
-        response.status(404).end()
+        console.log("get id", error.name)
+        next(error)
     })
 })
 
-app.delete('/api/persons/:id', (request,response) => {
+app.delete('/api/persons/:id', (request,response, next) => {
     const id = request.params.id
     //console.log(id)
     Contact.findByIdAndDelete(id).then(result => {
-        response.status(204).end()
-    })
+        console.log(result)
+        if(result){
+            response.status(204).end()
+        }else{
+            response.status(404).end()
+        }
+    }).catch(error => next(error))
 })
 
 const maxId = 10000
@@ -106,7 +112,7 @@ app.post('/api/persons', (request,response) => {
 
     if(name && number){
         console.log("entro")
-        if(!personList.find(p => p.name.toLowerCase() === name.toLowerCase())){
+        if(!Contact.findOne({name: name})){
             console.log("entro 2")
             //const pId = Math.floor(Math.random() * maxId)
             // const person = {
@@ -136,6 +142,23 @@ app.post('/api/persons', (request,response) => {
     }
 })
 
+//unknown endpoint
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({
+        error: "Unknown endpoint"
+    })
+}
+
+app.use(unknownEndpoint)
+
+//middleware error handler
+const errorHandler = (error, request, response, next) => {
+    console.error(error.mesage)
+    //response.status(404).end()
+
+    next(error)
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, ()=>{
