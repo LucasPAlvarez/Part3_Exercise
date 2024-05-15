@@ -27,29 +27,6 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :j
     skip: (request, response) => request.method !== 'POST'
 }))
 
-let personList = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
-
 // app.get('/', (request, response) =>{
 //     response.send("<h1>Hello, it is on</h1>")
 // })
@@ -130,9 +107,9 @@ app.post('/api/persons', (request,response) => {
             })
         }else{
             console.log("paso2")
-        response.status(400).json({
-            error: 'name must be unique'
-        })
+            response.status(400).json({
+                error: 'name must be unique'
+            })
         }
     }else{
         console.log("paso")
@@ -141,6 +118,22 @@ app.post('/api/persons', (request,response) => {
         })
     }
 })
+
+app.put('/api/persons/:id', (request, response, next) => {
+    const id = request.params.id
+
+    console.log(request.body)
+
+    const updatedContact = {
+        name: request.body.name,
+        number: request.body.tel
+    }
+
+    Contact.findByIdAndUpdate(id, updatedContact, {new: true}).then(result => {
+        response.json(result)
+    }).catch(error => next(error))
+})
+
 
 //unknown endpoint
 const unknownEndpoint = (request, response) => {
