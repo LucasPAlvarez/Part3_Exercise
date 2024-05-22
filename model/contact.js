@@ -10,7 +10,13 @@ mongo.connect(url).then(result => {
 
 const contactSchema = mongo.Schema({
     name: {type:String, minLength:4, require: true},
-    number: String
+    number: {
+        type: String,
+        validate: {
+            validator: v => /\d{2}-\d{6}|\d{3}-\d{5}/.test(v),
+            message: props => `${props.value} it's not valid phone number`
+        },
+        require: true}
 })
 
 contactSchema.set('toJSON', {
