@@ -9,7 +9,7 @@ mongo.connect(url).then(result => {
 })
 
 const contactSchema = mongo.Schema({
-    name: String,
+    name: {type:String, minLength:4, require: true},
     number: String
 })
 

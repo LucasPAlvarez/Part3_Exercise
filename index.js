@@ -6,6 +6,7 @@ const cors = require('cors')
 const app = express()
 
 const Contact = require('./model/contact')
+const contact = require('./model/contact')
 
 app.use(express.json())
 app.use(cors())
@@ -81,36 +82,38 @@ app.delete('/api/persons/:id', (request,response, next) => {
 
 const maxId = 10000
 
-app.post('/api/persons', (request,response) => {
-    console.log("request", request.body)
+app.post('/api/persons', (request,response,next) => {
+    //console.log("request", request.body)
     const name = request.body.name
     const number = request.body.tel
-    console.log('name', name, 'phone', number, 'logic', name && number)
+    //console.log('name', name, 'phone', number, 'logic', name && number)
 
     if(name && number){
         console.log("entro")
-        if(!Contact.findOne({name: name})){
-            console.log("entro 2")
-            //const pId = Math.floor(Math.random() * maxId)
-            // const person = {
-            //     id: pId,
-            //     name: name,
-            //     number: number       
-            // }
-            // console.log('person', person)
-            // personList = personList.concat(person)
-            // response.json(person)
-            const contact = new Contact({name: name, number: number})
-            contact.save().then(result => {
-                console.log(result)
-                response.json(result)
-            })
-        }else{
-            console.log("paso2")
-            response.status(400).json({
-                error: 'name must be unique'
-            })
-        }
+        Contact.findOne({name: name}).then(contactFound => {
+            if(!contactFound){
+                console.log("entro 2")
+                //const pId = Math.floor(Math.random() * maxId)
+                // const person = {
+                //     id: pId,
+                //     name: name,
+                //     number: number       
+                // }
+                // console.log('person', person)
+                // personList = personList.concat(person)
+                // response.json(person)
+                const contact = new Contact({name: name, number: number})
+                contact.save().then(result => {
+                    //console.log(result)
+                    response.json(result)
+                }).catch(error => next(error))
+            }else{
+                console.log("paso2")
+                response.status(400).json({
+                    error: 'name must be unique'
+                })
+            }
+        })
     }else{
         console.log("paso")
         response.status(400).json({
@@ -129,9 +132,11 @@ app.put('/api/persons/:id', (request, response, next) => {
         number: request.body.tel
     }
 
-    Contact.findByIdAndUpdate(id, updatedContact, {new: true}).then(result => {
+    Contact.findByIdAndUpdate(id, updatedContact, {new: true, runValidator: true, context: 'query'})
+    .then(result => {
         response.json(result)
-    }).catch(error => next(error))
+    })
+    .catch(error => next(error))
 })
 
 
@@ -146,8 +151,11 @@ app.use(unknownEndpoint)
 
 //middleware error handler
 const errorHandler = (error, request, response, next) => {
-    console.error(error.mesage)
+    //console.error(error.message)
     //response.status(404).end()
+    if(error.name === 'ValidationError'){
+        return response.status(404).json({error: error.message})
+    }
 
     next(error)
 }

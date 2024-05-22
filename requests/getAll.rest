@@ -8,7 +8,7 @@ GET http://localhost:3001/info
 GET http://localhost:3001/api/persons/1
 
 ###
-DELETE http://localhost:3001/api/persons/1
+DELETE http://localhost:3001/api/persons/66451c4f43fbade42eb17455
 
 ###
 
@@ -16,8 +16,8 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "ricardo",
-    "number": "2"
+    "name": "Ricardo",
+    "tel": "2"
 }
 
 ###
